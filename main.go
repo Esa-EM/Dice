@@ -10,9 +10,9 @@ import (
 	"time"
 )
 
-const dicefile = "dice.txt"
+const dicefile = "dice.txt" // no need to redeclare dicefile every time...
 
-func main() {
+func main() { //works for everything that is implemented for now
 
 	var invalid bool
 	var result int
@@ -23,7 +23,6 @@ func main() {
 		tools.Helper()
 	} else if len(os.Args) == 1 {
 		InitializeDiceFile()
-	out:
 		//menu printing
 		for {
 			tools.ClearScreen()
@@ -50,7 +49,7 @@ func main() {
 			switch choice {
 			case 1:
 				result = tools.RollDice()
-				break out
+				Result(result)
 
 			case 2:
 
@@ -75,6 +74,10 @@ func main() {
 		}
 
 	}
+}
+
+func Result(result int) { //works
+	var invalid bool
 	tools.ClearScreen() //lets print roll result out!
 	for i := 0; i < 1; i++ {
 		fmt.Println("Rolling")
@@ -93,16 +96,21 @@ func main() {
 		fmt.Println(result)
 		time.Sleep(1 * time.Second)
 		fmt.Println(`
-	
-	1. Back
-	2. Exit
+	1. Roll again!
+	2. Back
+	3. Exit
 	`)
 		var choice int
 		fmt.Scan(&choice)
 		switch choice {
 		case 1:
-			main()
+			var NewResult int
+			NewResult = tools.RollDice()
+			Result(NewResult)
+
 		case 2:
+			main()
+		case 3:
 			tools.ClearScreen()
 			fmt.Println(`No more rolls. Goodbye!`)
 			time.Sleep(2 * time.Second)
@@ -113,7 +121,6 @@ func main() {
 			continue
 		}
 	}
-
 }
 
 func ChangeDice() { //works
@@ -238,7 +245,7 @@ func showDices() { //works
 	}
 }
 
-func AddDice() { //works
+func AddDice() { //works, but doesnt work for windows?
 	tools.ClearScreen()
 	fmt.Print(`
 	Enter the dice values separated with space and hit enter. Example:
@@ -309,7 +316,7 @@ func resetDices() { //works
 	main()
 }
 
-func EditFirstLine(newFirstLine string) error {
+func EditFirstLine(newFirstLine string) error { //works
 	// Open the dice.txt file for reading and writing
 	file, err := os.OpenFile(dicefile, os.O_RDWR, 0644)
 	if err != nil {
