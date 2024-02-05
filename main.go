@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"dice/history"
 	"dice/tools"
 	"fmt"
 	"os"
@@ -58,7 +59,7 @@ func main() { //works for everything that is implemented for now
 				uf = true
 				continue
 			case 4:
-				uf = true
+				history.History()
 				continue
 			case 5:
 				tools.ClearScreen()
@@ -79,6 +80,7 @@ func main() { //works for everything that is implemented for now
 func Result(result int) { //works
 	var invalid bool
 	tools.ClearScreen() //lets print roll result out!
+	go history.AddToHistory(result)
 	for i := 0; i < 1; i++ {
 		fmt.Println("Rolling")
 		time.Sleep(1 * time.Second)
@@ -200,14 +202,14 @@ func selDices() []int { // works
 		} else {
 			fmt.Println("Select dice by giving its number:")
 		}
-		fmt.Println(`input 1 to return
+		fmt.Println(`input 0 to return
 
 	`)
 
 		var choice string
 
 		fmt.Scan(&choice)
-		if choice == "1" {
+		if choice == "0" {
 			ChangeDice()
 		}
 		lastI, err := tools.LastLineIndex()
@@ -221,9 +223,9 @@ func selDices() []int { // works
 
 		if choiceint > lastI {
 			choiceint = lastI
-			choice = strconv.Itoa(choiceint)
 		}
-
+		choiceint += 1
+		choice = strconv.Itoa(choiceint)
 		//Edit first line to be latest dice index
 		EditFirstLine(choice)
 		ChangeDice()
@@ -240,7 +242,7 @@ func showDices() { //works
 	lines := strings.Split(string(Dices), "\n")
 	for i, line := range lines {
 		if i != 0 && line != "" {
-			fmt.Printf("%0d - %s\n", i+1, line)
+			fmt.Printf("%0d - %s\n", i, line)
 		}
 	}
 }
@@ -318,7 +320,7 @@ func resetDices() { //works
 
 	err := os.Remove(dicefile)
 	if err != nil {
-		fmt.Println("Error deleting empty file:", err)
+		fmt.Println("Error deleting dices:", err)
 	}
 	main()
 }
