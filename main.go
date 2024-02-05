@@ -248,13 +248,20 @@ func showDices() { //works
 func AddDice() { //works, but doesnt work for windows?
 	tools.ClearScreen()
 	fmt.Print(`
-	Enter the dice values separated with space and hit enter. Example:
-	1 2 3 4 5 6 
-	only numbers will be accepted
-	Input your values:`)
-	scanner := bufio.NewScanner(os.Stdin)
-	scanner.Scan()
-	toValidate := scanner.Text()
+    Enter the dice values separated with space and hit enter. Example:
+    1 2 3 4 5 6 
+    only numbers will be accepted
+    Input your values:`)
+	reader := bufio.NewReader(os.Stdin)
+	toValidate, err := reader.ReadString('\n')
+	if err != nil {
+		fmt.Println("Error reading input:", err)
+		return
+	}
+	// Replace both "\r" and "\n" with empty strings. Lets hope this fixes windows problem.
+	toValidate = strings.ReplaceAll(toValidate, "\r", "")
+	toValidate = strings.ReplaceAll(toValidate, "\n", "")
+
 	newDice := tools.Validate(toValidate)
 	if len(newDice) != len(toValidate) {
 		tools.ClearScreen()
