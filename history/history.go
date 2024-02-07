@@ -7,12 +7,15 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/eiannone/keyboard"
 )
 
 // testing if I can make functions from packages print and make their menus and access tools functions
 
 func History() { //works
 	var invalid bool
+	var deleted bool
 	InitializeHistoryFile()
 
 	//menu printing
@@ -21,7 +24,9 @@ func History() { //works
 		if invalid {
 			fmt.Println("Invalid choice. Please use valid number.")
 			invalid = false
-		} else {
+		} else if deleted {
+			deleted = false
+			fmt.Println("---History deleted---")
 			fmt.Println("Select with number:")
 		}
 		fmt.Println(`
@@ -32,20 +37,24 @@ func History() { //works
 	4. Exit.
 
 	`)
-		var choice int
-		var choice2 string
-		fmt.Scan(&choice)
-		switch choice {
-		case 1:
+		char, key, err := keyboard.GetKey()
+		if err != nil {
+			fmt.Println("Error reading key:", err)
+			break
+		}
+		switch {
+		case char == '1':
 			tools.ClearScreen()
 			ShowHistory()
-			fmt.Println(`input anything and hit enter to go back`)
-			fmt.Scan(&choice2)
-			if choice2 != "gaomvapomvewoivamkl" {
-				History()
+			fmt.Println(`Press any key to go back`)
+			_, _, err := keyboard.GetKey()
+			if err != nil {
+				fmt.Println("Error reading key:", err)
+				break
 			}
+			continue
 
-		case 2:
+		case char == '2':
 			for {
 				tools.ClearScreen()
 				if invalid {
@@ -58,23 +67,28 @@ func History() { //works
 				1 = YES!
 				2 = I changed my mind...
 				`)
-				fmt.Scan(&choice)
+				char, _, err := keyboard.GetKey()
+				if err != nil {
+					fmt.Println("Error reading key:", err)
+					break
+				}
 
-				switch choice {
-				case 1:
+				if char == '1' {
 					ClearHistory()
-					History()
-				case 2:
-					History()
-				default:
+					deleted = true
+					break
+				}
+				if char == '2' {
+					break
+				} else {
 					invalid = true
 					continue
 				}
 
 			}
-		case 3:
+		case char == '3':
 			return
-		case 4:
+		case char == '4' || key == keyboard.KeyEsc:
 			tools.ClearScreen()
 			fmt.Println(`No more rolls. Goodbye!`)
 			time.Sleep(2 * time.Second)
@@ -143,7 +157,7 @@ func InitializeHistoryFile() error { //works
 		_, err = file.WriteString(`You should use app to read these
 		`)
 		if err != nil {
-			return fmt.Errorf("error writing to dice file: %v", err)
+			return fmt.Errorf("error writing to history file: %v", err)
 		}
 	}
 	return nil

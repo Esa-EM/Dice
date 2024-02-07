@@ -6,8 +6,9 @@ import (
 	"fmt"
 	"os"
 	"strconv"
-	"strings"
 	"time"
+
+	"github.com/eiannone/keyboard"
 )
 
 func main() { //works for everything that is implemented for now
@@ -15,25 +16,7 @@ func main() { //works for everything that is implemented for now
 	var invalid bool
 	var result int
 	var uf bool
-
-	if len(os.Args) != 1 {
-		tools.ClearScreen()
-		tools.Helper()
-	} else if len(os.Args) == 1 {
-		tools.InitializeDiceFile()
-		//menu printing
-		for {
-			tools.ClearScreen()
-			if invalid {
-				fmt.Println("Invalid choice. Please use valid number.")
-				invalid = false
-			} else if uf {
-				fmt.Println("You selected upcoming feature. it isnt there yet, wait for next version")
-				uf = false
-			} else {
-				fmt.Println("Select with number:")
-			}
-			fmt.Println(`
+	mainmenu := `
 
 	1. Roll dice
 	2. Change dice
@@ -41,32 +24,65 @@ func main() { //works for everything that is implemented for now
 	4. History & statistics (upcoming)
 	5. Exit.
 
-	`)
-			var choice int
-			fmt.Scan(&choice)
-			switch choice {
-			case 1:
-				result = tools.RollDice()
-				Result(result)
+	`
 
-			case 2:
+	if len(os.Args) != 1 {
+		tools.ClearScreen()
+		tools.Helper()
+	} else if len(os.Args) == 1 {
+		tools.InitializeDiceFile()
+		//menu printing
 
-				ChangeDice()
-			case 3:
-				uf = true
-				continue
-			case 4:
-				history.History()
-				continue
-			case 5:
-				tools.ClearScreen()
-				fmt.Println(`No more rolls. Goodbye!`)
-				time.Sleep(2 * time.Second)
-				tools.Clear()
-				os.Exit(0)
-			default:
-				invalid = true
-				continue
+		err := keyboard.Open()
+		if err != nil {
+			fmt.Println("Error opening keyboard:", err)
+			os.Exit(1)
+		}
+		defer keyboard.Close()
+		for {
+			tools.ClearScreen()
+			if invalid {
+				fmt.Println("Invalid choice. Please use valid number.")
+				invalid = false
+				fmt.Println(mainmenu)
+			} else if uf {
+				fmt.Println("You selected upcoming feature. it isnt there yet, wait for next version")
+				uf = false
+				fmt.Println(mainmenu)
+
+			} else {
+				fmt.Println("Select with number:")
+
+				fmt.Println(mainmenu)
+				char, key, err := keyboard.GetKey()
+				if err != nil {
+					fmt.Println("Error reading key:", err)
+					break
+				}
+				switch {
+				case char == '1':
+					result = tools.RollDice()
+					Result(result)
+
+				case char == '2':
+
+					ChangeDice()
+				case char == '3':
+					uf = true
+					continue
+				case char == '4':
+					history.History()
+					continue
+				case char == '5' || key == keyboard.KeyEsc:
+					tools.ClearScreen()
+					fmt.Println(`No more rolls. Goodbye!`)
+					time.Sleep(2 * time.Second)
+					tools.Clear()
+					os.Exit(0)
+				default:
+					invalid = true
+					continue
+				}
 
 			}
 		}
@@ -76,6 +92,11 @@ func main() { //works for everything that is implemented for now
 
 func Result(result int) { //works
 	var invalid bool
+	resultmenu := `
+	1. Roll again!
+	2. Back
+	3. Exit
+	`
 	tools.ClearScreen() //lets print roll result out!
 	go history.AddToHistory(result)
 	for i := 0; i < 1; i++ {
@@ -85,31 +106,35 @@ func Result(result int) { //works
 	fmt.Println(`Rolling
 	`)
 	time.Sleep(1 * time.Second)
+	fmt.Println(result)
+	time.Sleep(1 * time.Second)
+	fmt.Println(resultmenu)
+
 	for {
+
 		if invalid {
 			fmt.Println("Invalid choice. Please use valid number.")
 			fmt.Println(`Rolled:
 			`)
 			invalid = false
+			fmt.Println(result)
+			fmt.Println(resultmenu)
 		}
-		fmt.Println(result)
-		time.Sleep(1 * time.Second)
-		fmt.Println(`
-	1. Roll again!
-	2. Back
-	3. Exit
-	`)
-		var choice int
-		fmt.Scan(&choice)
-		switch choice {
-		case 1:
+		char, key, err := keyboard.GetKey()
+		if err != nil {
+			fmt.Println("Error reading key:", err)
+			break
+		}
+
+		switch {
+		case char == '1':
 			var NewResult int
 			NewResult = tools.RollDice()
 			Result(NewResult)
 
-		case 2:
+		case char == '2':
 			main()
-		case 3:
+		case char == '3' || key == keyboard.KeyEsc:
 			tools.ClearScreen()
 			fmt.Println(`No more rolls. Goodbye!`)
 			time.Sleep(2 * time.Second)
@@ -123,16 +148,9 @@ func Result(result int) { //works
 }
 
 func ChangeDice() { //works
+	var reset bool
 	var invalid bool
-	for {
-		tools.ClearScreen()
-		if invalid {
-			fmt.Println("Invalid choice. Please use valid number.")
-			invalid = false
-		} else {
-			fmt.Println("Select with number:")
-		}
-		fmt.Println(`
+	changemenu := `
 	
 	1. Select dice
 	2. Make new dice
@@ -141,16 +159,38 @@ func ChangeDice() { //works
 
 	
 	
-	`)
-		var choice int
-		fmt.Scan(&choice)
+	`
+	err := keyboard.Open()
+	if err != nil {
+		fmt.Println("Error opening keyboard:", err)
+		os.Exit(1)
+	}
+	defer keyboard.Close()
+	for {
+		tools.ClearScreen()
+		if invalid {
+			fmt.Println("Invalid choice. Please use valid number.")
+			invalid = false
+		} else if reset {
+			fmt.Println("Dice set is now back to default")
+			fmt.Println("Select with number:")
+			reset = false
+		} else {
+			fmt.Println("Select with number:")
+		}
+		fmt.Println(changemenu)
+		char, key, err := keyboard.GetKey()
+		if err != nil {
+			fmt.Println("Error reading key:", err)
+			break
+		}
 
-		switch choice {
-		case 1:
+		switch {
+		case char == '1':
 			selDices()
-		case 2:
+		case char == '2':
 			tools.AddDice()
-		case 3:
+		case char == '3':
 			for {
 				tools.ClearScreen()
 				if invalid {
@@ -159,17 +199,24 @@ func ChangeDice() { //works
 				} else {
 					fmt.Println(`Are you sure? This cannot be undone`)
 				}
+
 				fmt.Println(`
 				1 = YES!
 				2 = NONO ABORT MISSION!
 				`)
-				fmt.Scan(&choice)
+				char, key, err := keyboard.GetKey()
+				if err != nil {
+					fmt.Println("Error reading key:", err)
+					break
+				}
 
-				switch choice {
-				case 1:
-					tools.ResetDices()
+				switch {
+				case char == '1':
+					if tools.ResetDices() {
+						reset = true
+					}
 					tools.InitializeDiceFile()
-				case 2:
+				case char == '2' || key == keyboard.KeyEsc:
 					main()
 				default:
 					invalid = true
@@ -178,7 +225,7 @@ func ChangeDice() { //works
 
 			}
 
-		case 4:
+		case char == '4' || key == keyboard.KeyEsc:
 			main()
 		default:
 			invalid = true
@@ -190,9 +237,10 @@ func ChangeDice() { //works
 
 func selDices() []int { // works
 	var invalid bool
+	keyboard.Close()
 	for {
 		tools.ClearScreen()
-		showDices()
+		tools.ShowDices()
 		fmt.Println("")
 		if invalid {
 			fmt.Println("Invalid choice. Please use valid number.")
@@ -226,21 +274,7 @@ func selDices() []int { // works
 		choice = strconv.Itoa(choiceint)
 		//Edit first line to be latest dice index
 		tools.EditFirstLine(choice)
+		keyboard.Open()
 		ChangeDice()
-	}
-}
-
-func showDices() { //works
-	Dices, err := os.ReadFile(tools.Path("dicefile.txt"))
-	if err != nil {
-		fmt.Println("Error reading Dices:", err)
-		return
-	}
-	fmt.Println("\nDices:")
-	lines := strings.Split(string(Dices), "\n")
-	for i, line := range lines {
-		if i != 0 && line != "" {
-			fmt.Printf("%0d - %s\n", i, line)
-		}
 	}
 }

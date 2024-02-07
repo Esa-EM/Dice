@@ -53,12 +53,18 @@ func AddDice() { //works, but doesnt work for windows?
 	EditFirstLine(lastIndexStr)
 }
 
-func ResetDices() { //works
+func ResetDices() bool { //works
+	var reset bool
 
 	err := os.Remove(Path("dicefile.txt"))
 	if err != nil {
 		fmt.Println("Error deleting dices:", err)
 	}
+	if err == nil {
+		reset = true
+	}
+
+	return reset
 }
 
 func EditFirstLine(newFirstLine string) error { //works
@@ -82,4 +88,19 @@ func EditFirstLine(newFirstLine string) error { //works
 	}
 
 	return nil
+}
+
+func ShowDices() { //works
+	Dices, err := os.ReadFile(Path("dicefile.txt"))
+	if err != nil {
+		fmt.Println("Error reading Dices:", err)
+		return
+	}
+	fmt.Println("\nDices:")
+	lines := strings.Split(string(Dices), "\n")
+	for i, line := range lines {
+		if i != 0 && line != "" {
+			fmt.Printf("%0d - %s\n", i, line)
+		}
+	}
 }
