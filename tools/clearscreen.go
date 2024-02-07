@@ -7,8 +7,6 @@ import (
 	"runtime"
 )
 
-const diceFile = "dice.txt"
-
 func ClearScreen() {
 	// Clearing the screen depends on the operating system
 	switch runtime.GOOS {

@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-func RollDice() int {
+func RollDice() int { //works
 	var index string
 	var err error
 	var result int
@@ -49,7 +49,7 @@ func RollDice() int {
 	return result
 }
 
-func Roll(dice []int) int {
+func Roll(dice []int) int { //works
 	var number int
 
 	rand.Seed(time.Now().UnixNano())
@@ -63,8 +63,8 @@ func Roll(dice []int) int {
 
 }
 
-func ReadDiceFromFile(index int) (string, error) {
-	file, err := os.Open(diceFile)
+func ReadDiceFromFile(index int) (string, error) { //works
+	file, err := os.Open(Path("dicefile.txt"))
 	if err != nil {
 		return "", fmt.Errorf("error opening dice file: %v", err)
 	}
@@ -85,9 +85,9 @@ func ReadDiceFromFile(index int) (string, error) {
 	return "", fmt.Errorf("line %d not found in dice file", index)
 }
 
-func LastLineIndex() (int, error) {
+func LastLineIndex() (int, error) { //works
 	// Open the dice.txt file for reading
-	file, err := os.Open(diceFile)
+	file, err := os.Open(Path("dicefile.txt"))
 	if err != nil {
 		return 0, fmt.Errorf("error opening dice file: %v", err)
 	}
@@ -109,4 +109,53 @@ func LastLineIndex() (int, error) {
 
 	// Return the index of the last line
 	return lastIndex, nil
+}
+
+func DiceArt(value int) string { //not used
+	switch value {
+	case 1:
+		return `
+  ________
+ |        |
+ |   ●    |
+ |        |
+ |________|`
+	case 2:
+		return `
+  ________
+ | ●      |
+ |        |
+ |      ● |
+ |________|`
+	case 3:
+		return `
+  ________
+ | ●      |
+ |   ●    |
+ |      ● |
+ |________|`
+	case 4:
+		return `
+  ________
+ | ●    ● |
+ |        |
+ | ●    ● |
+ |________|`
+	case 5:
+		return `
+  ________
+ | ●    ● |
+ |   ●    |
+ | ●    ● |
+ |________|`
+	case 6:
+		return `
+  ________
+ | ●    ● |
+ | ●    ● |
+ | ●    ● |
+ |________|`
+	default:
+		return "Invalid value, must be between 1 and 6"
+	}
 }

@@ -10,7 +10,6 @@ import (
 )
 
 // testing if I can make functions from packages print and make their menus and access tools functions
-const historyfile = "history.txt"
 
 func History() { //works
 	var invalid bool
@@ -34,15 +33,15 @@ func History() { //works
 
 	`)
 		var choice int
-		var choi string
+		var choice2 string
 		fmt.Scan(&choice)
 		switch choice {
 		case 1:
 			tools.ClearScreen()
 			ShowHistory()
 			fmt.Println(`input anything and hit enter to go back`)
-			fmt.Scan(&choi)
-			if choi != "gaomvapomvewoivamkl" {
+			fmt.Scan(&choice2)
+			if choice2 != "gaomvapomvewoivamkl" {
 				History()
 			}
 
@@ -95,7 +94,7 @@ func AddToHistory(lastres int) { //works
 	//lets make int into string
 	latestResult := strconv.Itoa(lastres)
 
-	file, err := os.OpenFile(historyfile, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
+	file, err := os.OpenFile(tools.Path("history.txt"), os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
 	if err != nil {
 		fmt.Println("Error adding history:", err)
 		return
@@ -110,7 +109,7 @@ func AddToHistory(lastres int) { //works
 }
 
 func ShowHistory() { //works
-	history, err := os.ReadFile(historyfile)
+	history, err := os.ReadFile(tools.Path("history.txt"))
 	if err != nil {
 		fmt.Println("Error reading history:", err)
 		return
@@ -125,7 +124,7 @@ func ShowHistory() { //works
 }
 
 func ClearHistory() { //works
-	err := os.Remove(historyfile)
+	err := os.Remove(tools.Path("history.txt"))
 	if err != nil {
 		fmt.Println("Error deleting history:", err)
 	}
@@ -133,15 +132,18 @@ func ClearHistory() { //works
 }
 
 func InitializeHistoryFile() error { //works
-	// Check if the dice.txt file exists
-	if _, err := os.Stat(historyfile); os.IsNotExist(err) {
+	// Check if the history file exists
+	if _, err := os.Stat(tools.Path("history.txt")); os.IsNotExist(err) {
 		// If it doesn't exist, create the file
-		file, err := os.Create(historyfile)
+		file, err := os.Create(tools.Path("history.txt"))
 		if err != nil {
 			return fmt.Errorf("error creating history file: %v", err)
-		} else {
-			file.Close()
-			return nil
+		}
+		defer file.Close()
+		_, err = file.WriteString(`You should use app to read these
+		`)
+		if err != nil {
+			return fmt.Errorf("error writing to dice file: %v", err)
 		}
 	}
 	return nil
