@@ -25,6 +25,10 @@ This project is a simple dice rolling application written in Go. It allows users
 3. Navigate to the project directory.
 4. Run `go run main.go` to start the application.
 
+ OR
+
+5. Use exec (exe for windows) file provided in Exec directory.
+
 ## Usage
 
 - Use the number keys to navigate through the menu options.
@@ -35,3 +39,5 @@ This project is a simple dice rolling application written in Go. It allows users
 
 - This project is experimental and may contain bugs or incomplete features.
 - Feel free to contribute or provide feedback to improve the project.
+- This program will create new directory and some .txt files in it to save data. You can delete them any time you want.
+- Directory will be made at same location where main.go, or built exec file is.
