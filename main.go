@@ -20,8 +20,8 @@ func main() { //works for everything that is implemented for now
 
 	1. Roll dice
 	2. Change dice
-	3. Betting game (upcoming)
-	4. History & statistics (upcoming)
+	3. Dice game vs real AI (upcoming)
+	4. History
 	5. Exit.
 
 	`
@@ -210,15 +210,14 @@ func ChangeDice() { //works
 					break
 				}
 
-				switch {
-				case char == '1':
+				if char == '1' {
 					if tools.ResetDices() {
 						reset = true
 					}
 					tools.InitializeDiceFile()
-				case char == '2' || key == keyboard.KeyEsc:
+				} else if char == '2' || key == keyboard.KeyEsc {
 					main()
-				default:
+				} else {
 					invalid = true
 					continue
 				}
@@ -246,7 +245,7 @@ func selDices() []int { // works
 			fmt.Println("Invalid choice. Please use valid number.")
 			invalid = false
 		} else {
-			fmt.Println("Select dice by giving its number:")
+			fmt.Println("Select dice by giving its number and pressing enter:")
 		}
 		fmt.Println(`input 0 to return
 

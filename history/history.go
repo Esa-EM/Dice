@@ -155,7 +155,7 @@ func InitializeHistoryFile() error { //works
 		}
 		defer file.Close()
 		_, err = file.WriteString(`You should use app to read these
-		`)
+`)
 		if err != nil {
 			return fmt.Errorf("error writing to history file: %v", err)
 		}
