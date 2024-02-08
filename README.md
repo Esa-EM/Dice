@@ -27,7 +27,7 @@ This project is a simple dice rolling application written in Go. It allows users
 
  OR
 
-5. Use exec (exe for windows) file provided in Exec directory.
+5. Use exec (exe for windows) file provided in Exec directory. (.Exe is not tested. I have no idea if it works.)
 
 ## Usage
 
