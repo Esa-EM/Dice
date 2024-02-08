@@ -41,3 +41,4 @@ This project is a simple dice rolling application written in Go. It allows users
 - Feel free to contribute or provide feedback to improve the project.
 - This program will create new directory and some .txt files in it to save data. You can delete them any time you want.
 - Directory will be made at same location where main.go, or built exec file is.
+
