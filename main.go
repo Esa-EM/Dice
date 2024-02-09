@@ -1,6 +1,7 @@
 package main
 
 import (
+	"dice/game"
 	"dice/history"
 	"dice/tools"
 	"fmt"
@@ -68,11 +69,9 @@ func main() { //works for everything that is implemented for now
 
 					ChangeDice()
 				case char == '3':
-					uf = true
-					continue
+					game.StartGame()
 				case char == '4':
 					history.History()
-					continue
 				case char == '5' || key == keyboard.KeyEsc:
 					tools.ClearScreen()
 					fmt.Println(`No more rolls. Goodbye!`)
