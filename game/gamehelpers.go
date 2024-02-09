@@ -22,44 +22,53 @@ func Clear() {
 	}
 }
 
-func DiceArt(value int) string { //not used
+func NewGame() {
+	money := 50
+	owned := ""
+	equipped := ""
+	shop := ""
+
+	TheGame(money, owned, equipped, shop)
+}
+
+func DiceArt(value string) string { //not used
 	switch value {
-	case 1:
+	case "1":
 		return `
   ________
  |        |
  |   ●    |
  |        |
  |________|`
-	case 2:
+	case "2":
 		return `
   ________
  | ●      |
  |        |
  |      ● |
  |________|`
-	case 3:
+	case "3":
 		return `
   ________
  | ●      |
  |   ●    |
  |      ● |
  |________|`
-	case 4:
+	case "4":
 		return `
   ________
  | ●    ● |
  |        |
  | ●    ● |
  |________|`
-	case 5:
+	case "5":
 		return `
   ________
  | ●    ● |
  |   ●    |
  | ●    ● |
  |________|`
-	case 6:
+	case "6":
 		return `
   ________
  | ●    ● |
@@ -67,6 +76,14 @@ func DiceArt(value int) string { //not used
  | ●    ● |
  |________|`
 	default:
-		return "Invalid value, must be between 1 and 6"
+		return "Error: Invalid value, must be between 1 and 6"
 	}
+}
+
+var defaultDice = []int{1, 2, 3, 4, 5, 6}
+
+func ResetDice() []int {
+	var dice []int
+	dice = defaultDice
+	return dice
 }

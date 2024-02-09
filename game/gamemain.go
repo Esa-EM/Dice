@@ -1,8 +1,10 @@
 package game
 
 import (
+	"dice/tools"
 	"fmt"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/eiannone/keyboard"
@@ -63,7 +65,7 @@ func maingame() {
 	Clear()
 
 	optio1 := "Continue saved game"
-	optio2 := "New game"
+	optio2 := "New game (Deletes old save file!)"
 	optio3 := "I dont know what you want, press esc to quit..."
 
 	var i int
@@ -100,8 +102,24 @@ func maingame() {
 			}
 		case keyboard.KeyEnter:
 			switch {
-			case i == 0: //I will fill these later
+			case i == 0:
+				if _, err := os.Stat(tools.Path("Save1.txt")); os.IsNotExist(err) {
+					Clear()
+					fmt.Println("There is no save file to load. Starting new game")
+					go InitializeSaveFile("Save1")
+					time.Sleep(2 * time.Second)
+					NewGame()
+
+				} else {
+					//LoadGame()
+					//implement load savefile and figure rest
+				}
 			case i == 1:
+				Clear()
+				fmt.Println("Loading game")
+				go InitializeSaveFile("Save1")
+				time.Sleep(1 * time.Second)
+				NewGame()
 			case i == 2:
 				Clear()
 				fmt.Println(`press esc to exit, anything else to go back`)
@@ -116,6 +134,184 @@ func maingame() {
 					Clear()
 					os.Exit(0)
 				}
+			}
+		case keyboard.KeyEsc:
+			Clear()
+			fmt.Println(`press esc again to exit, anything else to go back`)
+			_, key, err := keyboard.GetKey()
+			if err != nil {
+				fmt.Println("Error reading key:", err)
+				time.Sleep(1 * time.Second)
+			}
+			if key != keyboard.KeyEsc {
+				continue
+			} else {
+				os.Exit(0)
+			}
+
+		}
+	}
+
+}
+
+func TheGame(money int, owned string, equipped string, shop string) {
+
+	var dice []int
+	var Weighted6 bool
+	var Weighted5 bool
+	var Weighted4 bool
+	var SlightlyWeighted6 bool
+	var SlightlyWeighted5 bool
+	var SlightlyWeighted4 bool
+	var Charmlvl1 bool
+	var Charmlvl2 bool
+	var Charmlvl3 bool
+	var User string
+	var AI string
+	var Userint int
+	var AIint int
+	var bet int
+
+	dice = []int{1, 2, 3, 4, 5, 6}
+	AIdice := dice
+
+	if Weighted6 {
+		dice = append(dice, 6, 6)
+	}
+	if Weighted5 {
+		dice = append(dice, 5, 5)
+	}
+	if Weighted4 {
+		dice = append(dice, 4, 4)
+	}
+	if SlightlyWeighted6 {
+		dice = append(dice, 6)
+	}
+	if SlightlyWeighted5 {
+		dice = append(dice, 5)
+	}
+	if SlightlyWeighted4 {
+		dice = append(dice, 4)
+	}
+	if Charmlvl1 {
+		AIdice = append(AIdice, 3)
+	}
+	if Charmlvl2 {
+		AIdice = append(AIdice, 2)
+	}
+	if Charmlvl3 {
+		AIdice = append(AIdice, 1)
+	}
+
+	Clear()
+
+	optio1 := "Roll!"
+	optio2 := "Set bet"
+	optio3 := "Items"
+	optio4 := "Shop"
+
+	var x int
+	var y int
+
+	for {
+		if x == 0 && y == 0 {
+			Clear()
+			fmt.Printf("\n\033[1mGAME OF DICE!\033[0m\n\n")
+			fmt.Printf("\033[1m%s\033[0m     %s\n%s     %s\n", optio1, optio2, optio3, optio4)
+		}
+		if x == 1 && y == 0 {
+			Clear()
+			fmt.Printf("\n\033[1mGAME OF DICE!\033[0m\n\n")
+			fmt.Printf("%s     \033[1m%s\033[0m\n%s     %s\n", optio1, optio2, optio3, optio4)
+		}
+		if x == 0 && y == 1 {
+			Clear()
+			fmt.Printf("\n\033[1mGAME OF DICE!\033[0m\n\n")
+			fmt.Printf("%s     %s\n\033[1m%s\033[0m     %s\n", optio1, optio2, optio3, optio4)
+		}
+		if x == 1 && y == 1 {
+			Clear()
+			fmt.Printf("\n\033[1mGAME OF DICE!\033[0m\n\n")
+			fmt.Printf("%s     %s\n%s     \033[1m%s\033[0m\n", optio1, optio2, optio3, optio4)
+		}
+		_, key, err := keyboard.GetKey()
+		if err != nil {
+			fmt.Println("Error reading key:", err)
+			time.Sleep(1 * time.Second)
+		}
+		switch key {
+		case keyboard.KeyArrowUp:
+			if y > 0 {
+				y--
+			}
+		case keyboard.KeyArrowDown:
+			if y < 1 {
+				y++
+			}
+		case keyboard.KeyArrowLeft:
+			if x > 0 {
+				x--
+			}
+		case keyboard.KeyArrowRight:
+			if x < 1 {
+				x++
+			}
+		case keyboard.KeyEnter:
+			switch {
+			case x == 0 && y == 0:
+				User = strconv.Itoa(tools.Roll(dice))
+				AI = strconv.Itoa(tools.Roll(AIdice))
+				Clear()
+				fmt.Println("You rolled:")
+				fmt.Println(DiceArt(User))
+				time.Sleep(1 * time.Second)
+				fmt.Println("AI rolled:")
+				fmt.Println(DiceArt(AI))
+				time.Sleep(1 * time.Second)
+				Userint, err = strconv.Atoi(User)
+				if err != nil {
+					fmt.Print("error getting your dice value")
+					time.Sleep(1 * time.Second)
+				}
+				AIint, err = strconv.Atoi(AI)
+				if err != nil {
+					fmt.Print("error getting AI dice value")
+					time.Sleep(1 * time.Second)
+				}
+				if Userint > AIint {
+					fmt.Println("You win!")
+					money += bet
+				} else {
+					fmt.Println("AI wins!")
+					money -= bet
+					if money <= 0 {
+						Clear()
+						go InitializeSaveFile("save1")
+						fmt.Println("You ran out of money. You lose")
+						time.Sleep(1 * time.Second)
+						fmt.Println(`Press any key to go back`)
+						_, _, err := keyboard.GetKey()
+						if err != nil {
+							fmt.Println("Error reading key:", err)
+							break
+						}
+						maingame()
+
+					}
+				}
+
+			case x == 1 && y == 0:
+				fmt.Println("bet")
+				time.Sleep(1 * time.Second)
+				continue
+			case x == 0 && y == 1:
+				fmt.Println("items")
+				time.Sleep(1 * time.Second)
+				continue
+			case x == 1 && y == 1:
+				fmt.Println("shop")
+				time.Sleep(1 * time.Second)
+				continue
 			}
 		case keyboard.KeyEsc:
 			Clear()

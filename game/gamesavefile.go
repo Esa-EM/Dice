@@ -77,7 +77,7 @@ func Savefile(money int, owned string, savefile string) bool {
 
 	toSave += moneyLenStr + moneyString + owned
 
-	file, err := os.OpenFile(tools.Path(savefile), os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
+	file, err := os.OpenFile(tools.Path(savefile), os.O_WRONLY|os.O_CREATE, 0644)
 	if err != nil {
 		fmt.Println("Error opening savefile", err)
 		return false
