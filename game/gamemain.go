@@ -221,22 +221,22 @@ func TheGame(money int, owned string, equipped string, shop string) {
 		}
 		if x == 0 && y == 0 {
 			Clear()
-			fmt.Printf("\n\033[1mGAME OF DICE!\033[0m\nMoney:%d€     Bet:%d€\n\n\n", money, bet)
+			fmt.Printf("\n\033[1mGAME OF DICE!\033[0m\nMoney:%d$     Bet:%d$\n\n\n", money, bet)
 			fmt.Printf("\033[1m%s\033[0m     %s\n%s     %s\n", optio1, optio2, optio3, optio4)
 		}
 		if x == 1 && y == 0 {
 			Clear()
-			fmt.Printf("\n\033[1mGAME OF DICE!\033[0m\nMoney:%d€     Bet:%d€\n\n\n", money, bet)
+			fmt.Printf("\n\033[1mGAME OF DICE!\033[0m\nMoney:%d$     Bet:%d$\n\n\n", money, bet)
 			fmt.Printf("%s     \033[1m%s\033[0m\n%s     %s\n", optio1, optio2, optio3, optio4)
 		}
 		if x == 0 && y == 1 {
 			Clear()
-			fmt.Printf("\n\033[1mGAME OF DICE!\033[0m\nMoney:%d€     Bet:%d€\n\n\n", money, bet)
+			fmt.Printf("\n\033[1mGAME OF DICE!\033[0m\nMoney:%d$     Bet:%d$\n\n\n", money, bet)
 			fmt.Printf("%s     %s\n\033[1m%s\033[0m     %s\n", optio1, optio2, optio3, optio4)
 		}
 		if x == 1 && y == 1 {
 			Clear()
-			fmt.Printf("\n\033[1mGAME OF DICE!\033[0m\nMoney:%d€     Bet:%d€\n\n\n", money, bet)
+			fmt.Printf("\n\033[1mGAME OF DICE!\033[0m\nMoney:%d$     Bet:%d$\n\n\n", money, bet)
 			fmt.Printf("%s     %s\n%s     \033[1m%s\033[0m\n", optio1, optio2, optio3, optio4)
 		}
 		_, key, err := keyboard.GetKey()
@@ -284,15 +284,15 @@ func TheGame(money int, owned string, equipped string, shop string) {
 					time.Sleep(1 * time.Second)
 				}
 				if Userint > AIint && money <= 100 {
-					fmt.Printf("\nYou win %d€!\n", bet)
+					fmt.Printf("\nYou win %d$!\n", bet)
 					money += bet
 					time.Sleep(3 * time.Second)
 				} else if Userint > AIint {
-					fmt.Printf("\nYou win %d€!\n", bet)
+					fmt.Printf("\nYou win %d$!\n", bet)
 					money += bet
 					time.Sleep(3 * time.Second)
 				} else {
-					fmt.Printf("\nAI wins! You lose %d€\n", bet)
+					fmt.Printf("\nAI wins! You lose %d$\n", bet)
 					money -= bet
 					time.Sleep(3 * time.Second)
 					if money <= 0 {
@@ -320,8 +320,8 @@ func TheGame(money int, owned string, equipped string, shop string) {
 				time.Sleep(1 * time.Second)
 				continue
 			case x == 1 && y == 1:
-				fmt.Println("shop")
-				time.Sleep(1 * time.Second)
+				Shop()
+				time.Sleep(200 * time.Millisecond)
 				continue
 			}
 		case keyboard.KeyEsc:
@@ -358,22 +358,22 @@ func Bet(money int) int {
 		if x == 0 && y == 0 {
 			Clear()
 			fmt.Printf("\n\033[1mSet your Bet!\033[0m (Press esc to go back)\n\n")
-			fmt.Printf("\033[1m%s€\033[0m     %s€\n%s€     %s\n", optio1, optio2, optio3, optio4)
+			fmt.Printf("\033[1m%s$\033[0m     %s$\n%s$     %s\n", optio1, optio2, optio3, optio4)
 		}
 		if x == 1 && y == 0 {
 			Clear()
 			fmt.Printf("\n\033[1mSet your Bet!\033[0m (Press esc to go back)\n\n")
-			fmt.Printf("%s€     \033[1m%s€\033[0m\n%s€     %s\n", optio1, optio2, optio3, optio4)
+			fmt.Printf("%s$     \033[1m%s$\033[0m\n%s$     %s\n", optio1, optio2, optio3, optio4)
 		}
 		if x == 0 && y == 1 {
 			Clear()
 			fmt.Printf("\n\033[1mSet your Bet!\033[0m (Press esc to go back)\n\n")
-			fmt.Printf("%s€     %s€\n\033[1m%s€\033[0m     %s\n", optio1, optio2, optio3, optio4)
+			fmt.Printf("%s$     %s$\n\033[1m%s$\033[0m     %s\n", optio1, optio2, optio3, optio4)
 		}
 		if x == 1 && y == 1 {
 			Clear()
 			fmt.Printf("\n\033[1mSet your Bet!\033[0m (Press esc to go back)\n\n")
-			fmt.Printf("%s€     %s€\n%s€     \033[1m%s\033[0m\n", optio1, optio2, optio3, optio4)
+			fmt.Printf("%s$     %s$\n%s$     \033[1m%s\033[0m\n", optio1, optio2, optio3, optio4)
 		}
 		_, key, err := keyboard.GetKey()
 		if err != nil {
@@ -417,4 +417,74 @@ func Bet(money int) int {
 
 		}
 	}
+}
+
+func Shop() {
+
+	Clear()
+
+	menu := make(map[int]string)
+
+	// Adding items to the map
+	menu[0] = "  Option 0  "
+	menu[1] = "  Option 1  "
+	menu[2] = "  Option 2  "
+	menu[3] = "  Option 3  "
+	menu[4] = "  Option 4  "
+
+	var lastIndex int
+	for index := range menu {
+		if index > lastIndex {
+			lastIndex = index
+		}
+	}
+
+	var i int
+	var anim string
+	for {
+		Clear()
+		fmt.Printf("\n\033[1mShop\033[0m\n\n")
+		if i == 0 {
+
+			anim = fmt.Sprintf("%s\033[1m%s\033[0m%s\n", menu[lastIndex], menu[i], menu[i+1])
+			fmt.Print(anim)
+		} else if i == lastIndex {
+
+			anim = fmt.Sprintf("%s\033[1m%s\033[0m%s\n", menu[i-1], menu[i], menu[0])
+			fmt.Print(anim)
+		} else {
+
+			anim = fmt.Sprintf("%s\033[1m%s\033[0m%s\n", menu[i-1], menu[i], menu[i+1])
+			fmt.Print(anim)
+		}
+
+		_, key, err := keyboard.GetKey()
+		if err != nil {
+			fmt.Println("Error reading key:", err)
+			time.Sleep(1 * time.Second)
+		}
+		switch key {
+		case keyboard.KeyArrowLeft:
+			if i == 0 {
+				i = lastIndex
+			} else {
+				i--
+			}
+		case keyboard.KeyArrowRight:
+			if i == lastIndex {
+				i = 0
+			} else {
+				i++
+			}
+			//for j := 0; j < 11; j++ {
+			//make animation loop here with var anim
+			//}
+		case keyboard.KeyEnter:
+
+		case keyboard.KeyEsc:
+			return
+
+		}
+	}
+
 }
