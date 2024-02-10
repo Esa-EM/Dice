@@ -39,51 +39,57 @@ func DiceArt(value string) string { //not used
  |        |
  |   ●    |
  |        |
- |________|`
+ |________|
+ 
+ `
 	case "2":
 		return `
   ________
  | ●      |
  |        |
  |      ● |
- |________|`
+ |________|
+ 
+ `
 	case "3":
 		return `
   ________
  | ●      |
  |   ●    |
  |      ● |
- |________|`
+ |________|
+ 
+ `
 	case "4":
 		return `
   ________
  | ●    ● |
  |        |
  | ●    ● |
- |________|`
+ |________|
+ 
+ `
 	case "5":
 		return `
   ________
  | ●    ● |
  |   ●    |
  | ●    ● |
- |________|`
+ |________|
+ 
+ `
 	case "6":
 		return `
   ________
  | ●    ● |
  | ●    ● |
  | ●    ● |
- |________|`
+ |________|
+ 
+ `
 	default:
 		return "Error: Invalid value, must be between 1 and 6"
 	}
 }
 
 var defaultDice = []int{1, 2, 3, 4, 5, 6}
-
-func ResetDice() []int {
-	var dice []int
-	dice = defaultDice
-	return dice
-}

@@ -111,6 +111,8 @@ func maingame() {
 					NewGame()
 
 				} else {
+					fmt.Println("this is not implemented yet.")
+					time.Sleep(2 * time.Second)
 					//LoadGame()
 					//implement load savefile and figure rest
 				}
@@ -170,9 +172,9 @@ func TheGame(money int, owned string, equipped string, shop string) {
 	var AI string
 	var Userint int
 	var AIint int
-	var bet int
+	bet := money / 10
 
-	dice = []int{1, 2, 3, 4, 5, 6}
+	dice = defaultDice
 	AIdice := dice
 
 	if Weighted6 {
@@ -214,24 +216,27 @@ func TheGame(money int, owned string, equipped string, shop string) {
 	var y int
 
 	for {
+		if money > 900000000 {
+			money = 900000000
+		}
 		if x == 0 && y == 0 {
 			Clear()
-			fmt.Printf("\n\033[1mGAME OF DICE!\033[0m\n\n")
+			fmt.Printf("\n\033[1mGAME OF DICE!\033[0m\nMoney:%d€     Bet:%d€\n\n\n", money, bet)
 			fmt.Printf("\033[1m%s\033[0m     %s\n%s     %s\n", optio1, optio2, optio3, optio4)
 		}
 		if x == 1 && y == 0 {
 			Clear()
-			fmt.Printf("\n\033[1mGAME OF DICE!\033[0m\n\n")
+			fmt.Printf("\n\033[1mGAME OF DICE!\033[0m\nMoney:%d€     Bet:%d€\n\n\n", money, bet)
 			fmt.Printf("%s     \033[1m%s\033[0m\n%s     %s\n", optio1, optio2, optio3, optio4)
 		}
 		if x == 0 && y == 1 {
 			Clear()
-			fmt.Printf("\n\033[1mGAME OF DICE!\033[0m\n\n")
+			fmt.Printf("\n\033[1mGAME OF DICE!\033[0m\nMoney:%d€     Bet:%d€\n\n\n", money, bet)
 			fmt.Printf("%s     %s\n\033[1m%s\033[0m     %s\n", optio1, optio2, optio3, optio4)
 		}
 		if x == 1 && y == 1 {
 			Clear()
-			fmt.Printf("\n\033[1mGAME OF DICE!\033[0m\n\n")
+			fmt.Printf("\n\033[1mGAME OF DICE!\033[0m\nMoney:%d€     Bet:%d€\n\n\n", money, bet)
 			fmt.Printf("%s     %s\n%s     \033[1m%s\033[0m\n", optio1, optio2, optio3, optio4)
 		}
 		_, key, err := keyboard.GetKey()
@@ -278,12 +283,18 @@ func TheGame(money int, owned string, equipped string, shop string) {
 					fmt.Print("error getting AI dice value")
 					time.Sleep(1 * time.Second)
 				}
-				if Userint > AIint {
-					fmt.Println("You win!")
+				if Userint > AIint && money <= 100 {
+					fmt.Printf("\nYou win %d€!\n", bet)
 					money += bet
+					time.Sleep(3 * time.Second)
+				} else if Userint > AIint {
+					fmt.Printf("\nYou win %d€!\n", bet)
+					money += bet
+					time.Sleep(3 * time.Second)
 				} else {
-					fmt.Println("AI wins!")
+					fmt.Printf("\nAI wins! You lose %d€\n", bet)
 					money -= bet
+					time.Sleep(3 * time.Second)
 					if money <= 0 {
 						Clear()
 						go InitializeSaveFile("save1")
@@ -301,8 +312,8 @@ func TheGame(money int, owned string, equipped string, shop string) {
 				}
 
 			case x == 1 && y == 0:
-				fmt.Println("bet")
-				time.Sleep(1 * time.Second)
+				bet = Bet(money)
+				time.Sleep(200 * time.Millisecond)
 				continue
 			case x == 0 && y == 1:
 				fmt.Println("items")
@@ -330,4 +341,80 @@ func TheGame(money int, owned string, equipped string, shop string) {
 		}
 	}
 
+}
+
+func Bet(money int) int {
+	Clear()
+
+	optio1 := strconv.Itoa(money / 10)
+	optio2 := strconv.Itoa(money / 5)
+	optio3 := strconv.Itoa(money / 2)
+	optio4 := "All IN!"
+	var bet int
+	var x int
+	var y int
+
+	for {
+		if x == 0 && y == 0 {
+			Clear()
+			fmt.Printf("\n\033[1mSet your Bet!\033[0m (Press esc to go back)\n\n")
+			fmt.Printf("\033[1m%s€\033[0m     %s€\n%s€     %s\n", optio1, optio2, optio3, optio4)
+		}
+		if x == 1 && y == 0 {
+			Clear()
+			fmt.Printf("\n\033[1mSet your Bet!\033[0m (Press esc to go back)\n\n")
+			fmt.Printf("%s€     \033[1m%s€\033[0m\n%s€     %s\n", optio1, optio2, optio3, optio4)
+		}
+		if x == 0 && y == 1 {
+			Clear()
+			fmt.Printf("\n\033[1mSet your Bet!\033[0m (Press esc to go back)\n\n")
+			fmt.Printf("%s€     %s€\n\033[1m%s€\033[0m     %s\n", optio1, optio2, optio3, optio4)
+		}
+		if x == 1 && y == 1 {
+			Clear()
+			fmt.Printf("\n\033[1mSet your Bet!\033[0m (Press esc to go back)\n\n")
+			fmt.Printf("%s€     %s€\n%s€     \033[1m%s\033[0m\n", optio1, optio2, optio3, optio4)
+		}
+		_, key, err := keyboard.GetKey()
+		if err != nil {
+			fmt.Println("Error reading key:", err)
+			time.Sleep(1 * time.Second)
+		}
+		switch key {
+		case keyboard.KeyArrowUp:
+			if y > 0 {
+				y--
+			}
+		case keyboard.KeyArrowDown:
+			if y < 1 {
+				y++
+			}
+		case keyboard.KeyArrowLeft:
+			if x > 0 {
+				x--
+			}
+		case keyboard.KeyArrowRight:
+			if x < 1 {
+				x++
+			}
+		case keyboard.KeyEnter:
+			switch {
+			case x == 0 && y == 0:
+				bet = money / 10
+				return bet
+			case x == 1 && y == 0:
+				bet = money / 5
+				return bet
+			case x == 0 && y == 1:
+				bet = money / 2
+				return bet
+			case x == 1 && y == 1:
+				bet = money
+				return bet
+			}
+		case keyboard.KeyEsc:
+			return bet
+
+		}
+	}
 }
