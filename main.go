@@ -188,7 +188,9 @@ func ChangeDice() { //works
 		case char == '1':
 			selDices()
 		case char == '2':
+			keyboard.Close()
 			tools.AddDice()
+			keyboard.Open()
 		case char == '3':
 			for {
 				tools.ClearScreen()

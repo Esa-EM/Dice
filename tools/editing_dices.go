@@ -6,6 +6,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 )
 
 func AddDice() { //works, but doesnt work for windows?
@@ -27,26 +28,33 @@ func AddDice() { //works, but doesnt work for windows?
 
 	newDice := Validate(toValidate)
 	if len(newDice) != len(toValidate) {
+		newDice = ""
+		toValidate = ""
 		ClearScreen()
 		fmt.Println("invalid input")
+		time.Sleep(2 * time.Second)
 		AddDice()
 	}
 	if newDice == "" || newDice == " " {
-		AddDice()
+		fmt.Println("Error adding dice: 1")
+		time.Sleep(2 * time.Second)
+		return
 	}
 	file, err := os.OpenFile(Path("dicefile.txt"), os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
 	if err != nil {
-		fmt.Println("Error adding dice:", err)
+		fmt.Println("Error adding dice: 2", err)
+		time.Sleep(2 * time.Second)
 	}
-
 	_, err = fmt.Fprintln(file, newDice)
 	if err != nil {
-		fmt.Println("Error adding dice:", err)
+		fmt.Println("Error adding dice: 3", err)
+		time.Sleep(2 * time.Second)
 	}
+	RemoveEmptyLines()
 	// now we set new dice to be current one
 	lastIndex, err := LastLineIndex()
 	if err != nil {
-		fmt.Println("Error adding dice:", err)
+		fmt.Println("Error adding dice: 4", err)
 	}
 	// Convert the index to a string
 	lastIndexStr := strconv.Itoa(lastIndex)

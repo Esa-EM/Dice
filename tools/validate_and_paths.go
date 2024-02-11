@@ -1,6 +1,7 @@
 package tools
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -78,5 +79,60 @@ func InitializeDiceFile() error { //works
 			return fmt.Errorf("error writing to dice file: %v", err)
 		}
 	}
+	return nil
+}
+
+func RemoveEmptyLines() error {
+	// Open the dicefile.txt file for reading and writing
+	file, err := os.OpenFile(Path("dicefile.txt"), os.O_RDWR, 0644)
+	if err != nil {
+		return fmt.Errorf("error opening file: %v", err)
+	}
+	defer file.Close()
+
+	// Create a temporary file to store the non-empty lines
+	tempFile, err := os.CreateTemp("", "temp")
+	if err != nil {
+		return fmt.Errorf("error creating temporary file: %v", err)
+	}
+	defer tempFile.Close()
+
+	// Create a scanner to read from the original file
+	scanner := bufio.NewScanner(file)
+
+	// Iterate over each line in the file
+	for scanner.Scan() {
+		line := scanner.Text()
+
+		// Check if the line is empty
+		if strings.TrimSpace(line) != "" {
+			// Write non-empty lines to the temporary file
+			_, err := fmt.Fprintln(tempFile, line)
+			if err != nil {
+				return fmt.Errorf("error writing to temporary file: %v", err)
+			}
+		}
+	}
+
+	// Check for scanner errors
+	if err := scanner.Err(); err != nil {
+		return fmt.Errorf("error scanning file: %v", err)
+	}
+
+	// Close the original file
+	if err := file.Close(); err != nil {
+		return fmt.Errorf("error closing original file: %v", err)
+	}
+
+	// Remove the original file
+	if err := os.Remove(Path("dicefile.txt")); err != nil {
+		return fmt.Errorf("error removing original file: %v", err)
+	}
+
+	// Rename the temporary file to the original dicefile.txt
+	if err := os.Rename(tempFile.Name(), Path("dicefile.txt")); err != nil {
+		return fmt.Errorf("error renaming temporary file: %v", err)
+	}
+
 	return nil
 }
