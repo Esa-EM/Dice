@@ -18,7 +18,7 @@ func StartGame() {
 	time.Sleep(1 * time.Second)
 	message := "You are about to face brutal real AI in GAME OF DICE!"
 	fmt.Printf("\033[1m%s\033[0m", message)
-	time.Sleep(3 * time.Second)
+	time.Sleep(2 * time.Second)
 	fmt.Println(`
 
 	There will be no mercy or instructions (use arrow keys and enter to select stuff)
@@ -26,11 +26,11 @@ func StartGame() {
 
 	time.Sleep(2 * time.Second)
 	fmt.Println("Mostly coz I am too lazy to write everything...")
-	time.Sleep(2 * time.Second)
+	time.Sleep(1 * time.Second)
 	fmt.Println(`
 	Hit esc to exit game whenever you want. 
 	It might not work all the time, but try again in second.`)
-	time.Sleep(2 * time.Second)
+	time.Sleep(1 * time.Second)
 	for {
 		fmt.Println(`
 	Sometimes use enter to proceed. Like now.`)
@@ -172,6 +172,8 @@ func TheGame(money int, owned string, equipped string, shop string) {
 	var AI string
 	var Userint int
 	var AIint int
+	var price int
+
 	bet := money / 10
 
 	dice = defaultDice
@@ -320,7 +322,8 @@ func TheGame(money int, owned string, equipped string, shop string) {
 				time.Sleep(1 * time.Second)
 				continue
 			case x == 1 && y == 1:
-				Shop()
+				price = Shop(money, bet)
+				bet -= price
 				time.Sleep(200 * time.Millisecond)
 				continue
 			}
@@ -419,7 +422,7 @@ func Bet(money int) int {
 	}
 }
 
-func Shop() {
+func Shop(money int, bet int) int {
 
 	Clear()
 
@@ -433,29 +436,48 @@ func Shop() {
 	menu[4] = "  Option 4  "
 
 	var lastIndex int
-	for index := range menu {
-		if index > lastIndex {
-			lastIndex = index
-		}
-	}
-
+	price := 0
 	var i int
 	var anim string
+	var right, left int
+
 	for {
+		for index := range menu {
+			if index > lastIndex {
+				lastIndex = index
+			}
+		}
 		Clear()
-		fmt.Printf("\n\033[1mShop\033[0m\n\n")
+		fmt.Printf("\n\033[1mShop\033[0m\nMoney:%d$     Bet:%d$\n\n\n", money, bet)
 		if i == 0 {
 
-			anim = fmt.Sprintf("%s\033[1m%s\033[0m%s\n", menu[lastIndex], menu[i], menu[i+1])
-			fmt.Print(anim)
+			anim = fmt.Sprintf("%s%s%s", menu[lastIndex], menu[i], menu[i+1])
+			fmt.Printf("%s\033[1m%s\033[0m%s", menu[lastIndex], menu[i], menu[i+1])
+			fmt.Println("")
+			right = 2
+			left = lastIndex - 1
 		} else if i == lastIndex {
 
-			anim = fmt.Sprintf("%s\033[1m%s\033[0m%s\n", menu[i-1], menu[i], menu[0])
-			fmt.Print(anim)
+			anim = fmt.Sprintf("%s%s%s", menu[i-1], menu[i], menu[0])
+			fmt.Printf("%s\033[1m%s\033[0m%s", menu[i-1], menu[i], menu[0])
+			fmt.Println("")
+			right = 1
+			left = i - 2
+
 		} else {
 
-			anim = fmt.Sprintf("%s\033[1m%s\033[0m%s\n", menu[i-1], menu[i], menu[i+1])
-			fmt.Print(anim)
+			anim = fmt.Sprintf("%s%s%s", menu[i-1], menu[i], menu[i+1])
+			fmt.Printf("%s\033[1m%s\033[0m%s", menu[i-1], menu[i], menu[i+1])
+			fmt.Println("")
+			right = i + 2
+			if i+1 == lastIndex {
+				right = 0
+			}
+			left = i - 2
+			if left == -1 {
+				left = lastIndex
+			}
+
 		}
 
 		_, key, err := keyboard.GetKey()
@@ -470,19 +492,36 @@ func Shop() {
 			} else {
 				i--
 			}
+			for j := len(menu[left]); j > 0; j-- {
+				Clear()
+				k := len(anim)
+				l := len(menu[left]) - j
+				fmt.Printf("\n\033[1mShop\033[0m\nMoney:%d$     Bet:%d$\n\n\n", money, bet)
+				fmt.Print(menu[left][j:])
+				fmt.Print(anim[:k-l])
+				fmt.Println("")
+				time.Sleep(10 * time.Millisecond)
+			}
+
 		case keyboard.KeyArrowRight:
 			if i == lastIndex {
 				i = 0
 			} else {
 				i++
 			}
-			//for j := 0; j < 11; j++ {
-			//make animation loop here with var anim
-			//}
+			for j := 0; j < len(menu[right]); j++ {
+				Clear()
+				fmt.Printf("\n\033[1mShop\033[0m\nMoney:%d$     Bet:%d$\n\n\n", money, bet)
+				fmt.Print(anim[j:])
+				fmt.Print(menu[right][:j])
+				fmt.Println("")
+				time.Sleep(10 * time.Millisecond)
+			}
 		case keyboard.KeyEnter:
+			return price
 
 		case keyboard.KeyEsc:
-			return
+			return price
 
 		}
 	}
